@@ -1,0 +1,260 @@
+/* ============================================
+   RESET Y ESTILOS BASE
+   ============================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #e0e0e0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   HEADER - Mobile First
+   ============================================ */
+header {
+  background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-bottom: 3px solid #e94560;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  color: #e94560;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+header h4 {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #b0b0b0;
+  line-height: 1.5;
+  max-width: 100%;
+}
+
+/* ============================================
+   NAVEGACIÓN - Mobile First
+   ============================================ */
+nav {
+  background-color: #0f3460;
+  padding: 0.5rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+nav ul li {
+  width: 100%;
+  text-align: center;
+}
+
+nav ul li a {
+  display: block;
+  color: #e0e0e0;
+  text-decoration: none;
+  padding: 0.8rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+nav ul li:last-child a {
+  border-bottom: none;
+}
+
+nav ul li a:hover,
+nav ul li a:focus {
+  background-color: #e94560;
+  color: #ffffff;
+}
+
+/* ============================================
+   MAIN - Mobile First
+   ============================================ */
+main {
+  flex: 1;
+  padding: 1.5rem 1rem;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+section {
+  background-color: rgba(15, 52, 96, 0.6);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-left: 4px solid #e94560;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(233, 69, 96, 0.4);
+}
+
+section h2 {
+  color: #e94560;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(233, 69, 96, 0.3);
+}
+
+section p {
+  color: #c0c0c0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* ============================================
+   FOOTER - Mobile First
+   ============================================ */
+footer {
+  background-color: #0f3460;
+  color: #b0b0b0;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  margin-top: auto;
+  border-top: 3px solid #e94560;
+}
+
+footer p {
+  font-size: 0.85rem;
+  margin: 0.3rem 0;
+  line-height: 1.5;
+}
+
+/* ============================================
+   MEDIA QUERIES - TABLET (768px+)
+   ============================================ */
+@media screen and (min-width: 768px) {
+  header {
+    padding: 2rem 2rem;
+  }
+
+  header h1 {
+    font-size: 2.5rem;
+  }
+
+  header h4 {
+    font-size: 1.1rem;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  nav ul {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  nav ul li {
+    width: auto;
+  }
+
+  nav ul li a {
+    padding: 0.8rem 1.5rem;
+    border-bottom: none;
+    border-radius: 5px;
+  }
+
+  main {
+    padding: 2rem;
+    max-width: 1000px;
+  }
+
+  section {
+    padding: 2rem;
+  }
+
+  section h2 {
+    font-size: 1.8rem;
+  }
+
+  footer {
+    padding: 2rem;
+  }
+
+  footer p {
+    font-size: 0.9rem;
+  }
+}
+
+/* ============================================
+   MEDIA QUERIES - DESKTOP (1024px+)
+   ============================================ */
+@media screen and (min-width: 1024px) {
+  header {
+    padding: 3rem 2rem;
+  }
+
+  header h1 {
+    font-size: 3rem;
+  }
+
+  header h4 {
+    font-size: 1.2rem;
+    max-width: 800px;
+  }
+
+  nav ul {
+    gap: 2rem;
+  }
+
+  nav ul li a {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
+
+  main {
+    padding: 3rem 2rem;
+    max-width: 1200px;
+  }
+
+  section {
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  section h2 {
+    font-size: 2rem;
+  }
+
+  section p {
+    font-size: 1.1rem;
+  }
+}
+
+/* ============================================
+   MEDIA QUERIES - PANTALLAS GRANDES (1440px+)
+   ============================================ */
+@media screen and (min-width: 1440px) {
+  main {
+    max-width: 1400px;
+  }
+
+  header h4 {
+    max-width: 900px;
+  }
+}
