@@ -18,7 +18,7 @@ body {
 }
 
 /* ============================================
-   HEADER - Mobile First
+   HEADER
    ============================================ */
 header {
   background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
@@ -44,7 +44,7 @@ header h4 {
 }
 
 /* ============================================
-   NAVEGACIÓN - Mobile First
+   NAVEGACIÓN
    ============================================ */
 nav {
   background-color: #0f3460;
@@ -89,7 +89,7 @@ nav ul li a:focus {
 }
 
 /* ============================================
-   MAIN - Mobile First
+   MAIN
    ============================================ */
 main {
   flex: 1;
@@ -101,16 +101,10 @@ main {
 section {
   background-color: rgba(15, 52, 96, 0.6);
   padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   border-left: 4px solid #e94560;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-section:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(233, 69, 96, 0.4);
 }
 
 section h2 {
@@ -121,14 +115,290 @@ section h2 {
   border-bottom: 2px solid rgba(233, 69, 96, 0.3);
 }
 
-section p {
+section > p {
   color: #c0c0c0;
   font-size: 1rem;
   line-height: 1.6;
+  margin-bottom: 1.5rem;
 }
 
 /* ============================================
-   FOOTER - Mobile First
+   TARJETAS (CARDS)
+   ============================================ */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card {
+  background-color: rgba(22, 33, 62, 0.8);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(233, 69, 96, 0.4);
+}
+
+.card-image {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.card-category {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #e94560;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.card-content h3 {
+  color: #e94560;
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.stars {
+  color: #ffd700;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+
+.rating-number {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.card-description {
+  color: #c0c0c0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.card-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: #b0b0b0;
+  flex-wrap: wrap;
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+.btn {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background-color: #e94560;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #d63651;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(233, 69, 96, 0.4);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #e94560;
+  border: 2px solid #e94560;
+}
+
+.btn-secondary:hover {
+  background-color: #e94560;
+  color: white;
+}
+
+.btn-submit {
+  background-color: #0f3460;
+  color: white;
+  width: 100%;
+}
+
+.btn-submit:hover {
+  background-color: #1a4d7a;
+}
+
+/* ============================================
+   FORMULARIO DE RESEÑAS
+   ============================================ */
+.review-form-container {
+  background-color: rgba(22, 33, 62, 0.6);
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-top: 2rem;
+  border: 2px solid rgba(233, 69, 96, 0.3);
+}
+
+.review-form-container h3 {
+  color: #e94560;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  color: #e0e0e0;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+  padding: 0.8rem;
+  border: 2px solid rgba(233, 69, 96, 0.3);
+  border-radius: 5px;
+  background-color: rgba(15, 52, 96, 0.4);
+  color: #e0e0e0;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #e94560;
+  background-color: rgba(15, 52, 96, 0.6);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Sistema de puntuación con estrellas */
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+
+.star-rating input[type="radio"] {
+  display: none;
+}
+
+.star-rating label {
+  font-size: 2rem;
+  color: #4a4a4a;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.star-rating input[type="radio"]:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: #ffd700;
+}
+
+/* ============================================
+   BIBLIOTECA PERSONAL
+   ============================================ */
+.biblioteca-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.stat-card {
+  background-color: rgba(22, 33, 62, 0.6);
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  border: 2px solid rgba(233, 69, 96, 0.3);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  border-color: #e94560;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  color: #e94560;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: #b0b0b0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.biblioteca-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* ============================================
+   FOOTER
    ============================================ */
 footer {
   background-color: #0f3460;
@@ -167,6 +437,7 @@ footer p {
     flex-direction: row;
     justify-content: center;
     gap: 1rem;
+    flex-wrap: wrap;
   }
 
   nav ul li {
@@ -190,6 +461,23 @@ footer p {
 
   section h2 {
     font-size: 1.8rem;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card-image {
+    height: 220px;
+  }
+
+  .biblioteca-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .biblioteca-actions {
+    flex-direction: row;
+    justify-content: center;
   }
 
   footer {
@@ -234,15 +522,32 @@ footer p {
 
   section {
     padding: 2.5rem;
-    margin-bottom: 2rem;
   }
 
   section h2 {
     font-size: 2rem;
   }
 
-  section p {
+  section > p {
     font-size: 1.1rem;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .card-image {
+    height: 250px;
+  }
+
+  .biblioteca-stats {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .review-form-container {
+    padding: 2rem;
   }
 }
 
@@ -256,5 +561,9 @@ footer p {
 
   header h4 {
     max-width: 900px;
+  }
+
+  .cards-grid {
+    gap: 2.5rem;
   }
 }
