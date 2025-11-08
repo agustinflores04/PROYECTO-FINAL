@@ -4,7 +4,7 @@
 
 // URL del backend (cambia esto cuando deploys tu servidor)
 const API_URL = 'http://localhost:5000/api';
-const USUARIO_ID = 'default-user'; // Puedes cambiarlo por un ID único de usuario
+const USUARIO_ID = 'default-user';
 
 // ============================================
 // VARIABLES GLOBALES
@@ -29,7 +29,6 @@ let usuarioActual = null;
 // FUNCIONES DE API (BACKEND)
 // ============================================
 
-// Cargar reseñas desde el backend
 async function cargarReseñas() {
   try {
     const response = await fetch(`${API_URL}/resenas`);
@@ -41,11 +40,9 @@ async function cargarReseñas() {
     }
   } catch (error) {
     console.error('❌ Error al cargar reseñas:', error);
-    mostrarNotificacion('⚠️ No se pudieron cargar las reseñas', 'warning');
   }
 }
 
-// Guardar reseña en el backend
 async function guardarReseña(reseña) {
   try {
     const response = await fetch(`${API_URL}/resenas`, {
@@ -69,7 +66,6 @@ async function guardarReseña(reseña) {
   }
 }
 
-// Cargar biblioteca desde el backend
 async function cargarBiblioteca() {
   try {
     const response = await fetch(`${API_URL}/biblioteca/${USUARIO_ID}`);
@@ -90,7 +86,6 @@ async function cargarBiblioteca() {
   }
 }
 
-// Guardar biblioteca en el backend
 async function guardarBiblioteca() {
   try {
     const response = await fetch(`${API_URL}/biblioteca/${USUARIO_ID}`, {
@@ -123,12 +118,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function inicializarApp() {
-  // Mostrar mensaje de carga
   console.log('⏳ Cargando datos desde MongoDB...');
 
-  // Cargar datos desde el backend
   await cargarReseñas();
   await cargarBiblioteca();
+
+  // Mostrar reseñas de la comunidad
+  mostrarResenasComunidad();
 
   // Inicializar eventos de formularios
   const formsReseña = document.querySelectorAll('.review-form');
@@ -173,7 +169,6 @@ async function inicializarApp() {
   mostrarNotificacion('✅ Conectado a la base de datos', 'success');
 }
 
-// Hacer únicos los IDs de los formularios
 function hacerIDsUnicos(form, index) {
   const elementos = form.querySelectorAll('[id]');
   elementos.forEach(elemento => {
@@ -198,13 +193,148 @@ function hacerIDsUnicos(form, index) {
 // SISTEMA DE RESEÑAS
 // ============================================
 
+function mostrarResenasComunidad() {
+  const secciones = ['Videojuegos', 'Anime', 'Peliculas', 'Series'];
+  
+  secciones.forEach(seccion => {
+    const seccionElement = document.getElementById(seccion);
+    if (!seccionElement) return;
+    
+    const resenasSeccion = database.reseñas.filter(r => r.tipo === seccion);
+    
+    if (resenasSeccion.length === 0) return;
+    
+    const cardsGrid = seccionElement.querySelector('.cards-grid');
+    if (!cardsGrid) return;
+    
+    let comunidadSection = seccionElement.querySelector('.comunidad-section');
+    if (comunidadSection) {
+      comunidadSection.remove();
+    }
+    
+    comunidadSection = document.createElement('div');
+    comunidadSection.className = 'comunidad-section';
+    comunidadSection.style.marginTop = '3rem';
+    
+    comunidadSection.innerHTML = `
+      <h3 style="color: #e94560; font-size: 1.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(233, 69, 96, 0.3);">
+        ✍️ Reseñas de la Comunidad
+      </h3>
+      <div class="cards-grid comunidad-grid"></div>
+    `;
+    
+    cardsGrid.parentNode.insertBefore(comunidadSection, cardsGrid.nextSibling);
+    
+    const comunidadGrid = comunidadSection.querySelector('.comunidad-grid');
+    
+    resenasSeccion.forEach(resena => {
+      const card = document.createElement('article');
+      card.className = 'card';
+      
+      const estrellas = '★'.repeat(resena.puntuacion) + '☆'.repeat(5 - resena.puntuacion);
+      const imagenUrl = resena.imagenUrl || 'https://via.placeholder.com/400x250/0f3460/e94560?text=Sin+Imagen';
+      
+      card.innerHTML = `
+        <div class="card-image">
+          <img src="${imagenUrl}" alt="${resena.nombreJuego}" onerror="this.src='https://via.placeholder.com/400x250/0f3460/e94560?text=Sin+Imagen'">
+          <span class="card-category">${resena.categoria}</span>
+        </div>
+        <div class="card-content">
+          <h3>${resena.nombreJuego}</h3>
+          <div class="rating">
+            <span class="stars">${estrellas}</span>
+            <span class="rating-number">${resena.puntuacion}/5</span>
+          </div>
+          <p class="card-description">${resena.texto.substring(0, 100)}${resena.texto.length > 100 ? '...' : ''}</p>
+          <div class="card-stats">
+            <span>👤 ${resena.autor}</span>
+            <span>📅 ${resena.fecha}</span>
+          </div>
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+            <button class="btn btn-primary" onclick="verResenaCompleta('${resena._id || resena.id}')" style="flex: 1;">Ver Reseña</button>
+            <button class="btn btn-secondary" onclick="eliminarResenaComunidad('${resena._id || resena.id}')" style="background: #f44336; border-color: #f44336; padding: 0.7rem 1rem;">🗑️</button>
+          </div>
+        </div>
+      `;
+      
+      comunidadGrid.appendChild(card);
+    });
+  });
+}
+
+function verResenaCompleta(id) {
+  const resena = database.reseñas.find(r => (r._id || r.id) == id);
+  if (!resena) return;
+  
+  const estrellas = '★'.repeat(resena.puntuacion) + '☆'.repeat(5 - resena.puntuacion);
+  const imagenUrl = resena.imagenUrl || 'https://via.placeholder.com/400x250/0f3460/e94560?text=Sin+Imagen';
+  
+  const contenido = `
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <img src="${imagenUrl}" alt="${resena.nombreJuego}" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://via.placeholder.com/400x250/0f3460/e94560?text=Sin+Imagen'">
+      <div>
+        <span style="background: #e94560; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+          ${resena.categoria}
+        </span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <span style="color: #ffd700; font-size: 1.5rem;">${estrellas}</span>
+        <span style="color: #b0b0b0; font-size: 1.2rem;">${resena.puntuacion}/5</span>
+      </div>
+      <p style="color: #c0c0c0; line-height: 1.6; font-size: 1rem;">${resena.texto}</p>
+      <div style="border-top: 1px solid rgba(233, 69, 96, 0.3); padding-top: 1rem; display: flex; justify-content: space-between; color: #808080; font-size: 0.9rem;">
+        <span>👤 ${resena.autor}</span>
+        <span>📅 ${resena.fecha}</span>
+      </div>
+    </div>
+  `;
+  
+  mostrarModal(`📝 ${resena.nombreJuego}`, contenido);
+}
+
+// Eliminar reseña de la comunidad
+async function eliminarResenaComunidad(id) {
+  const resena = database.reseñas.find(r => (r._id || r.id) == id);
+  if (!resena) {
+    mostrarNotificacion('⚠️ Reseña no encontrada', 'warning');
+    return;
+  }
+  
+  if (confirm(`¿Estás seguro de eliminar la reseña de "${resena.nombreJuego}"?`)) {
+    try {
+      const response = await fetch(`${API_URL}/resenas/${id}`, {
+        method: 'DELETE'
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Eliminar de la base de datos local
+        database.reseñas = database.reseñas.filter(r => (r._id || r.id) != id);
+        
+        mostrarNotificacion('✅ Reseña eliminada correctamente', 'success');
+        
+        // Actualizar la visualización
+        mostrarResenasComunidad();
+      } else {
+        mostrarNotificacion('⚠️ Error al eliminar la reseña', 'error');
+      }
+    } catch (error) {
+      console.error('❌ Error al eliminar reseña:', error);
+      mostrarNotificacion('❌ Error de conexión al eliminar', 'error');
+    }
+  }
+}
+
 async function manejarEnvioReseña(e) {
   e.preventDefault();
   
   const form = e.target;
   const seccion = form.closest('section').id;
   
-  const inputNombre = form.querySelector('input[type="text"]');
+  const inputs = form.querySelectorAll('input[type="text"], input[type="url"]');
+  const inputNombre = inputs[0];
+  const inputImagen = inputs[1];
   const selectCategoria = form.querySelector('select');
   const puntuacion = form.querySelector('input[name^="rating"]:checked');
   const textoReseña = form.querySelector('textarea');
@@ -234,22 +364,21 @@ async function manejarEnvioReseña(e) {
     categoria: selectCategoria.value,
     puntuacion: parseInt(puntuacion.value),
     texto: textoReseña.value.trim(),
+    imagenUrl: inputImagen && inputImagen.value.trim() ? inputImagen.value.trim() : 'https://via.placeholder.com/400x250/0f3460/e94560?text=Sin+Imagen',
     fecha: new Date().toLocaleDateString('es-ES'),
     autor: usuarioActual ? usuarioActual.nombre : 'Anónimo',
     likes: 0,
     tipo: seccion
   };
 
-  // Guardar localmente
   database.reseñas.push(nuevaReseña);
 
-  // Guardar en MongoDB
   const guardado = await guardarReseña(nuevaReseña);
   
   if (guardado) {
     mostrarNotificacion('✅ ¡Reseña publicada en la base de datos!', 'success');
-    // Recargar reseñas para obtener el ID de MongoDB
     await cargarReseñas();
+    mostrarResenasComunidad();
   } else {
     mostrarNotificacion('⚠️ Reseña publicada localmente, error al sincronizar', 'warning');
   }
@@ -442,7 +571,6 @@ function mostrarBibliotecaCompleta() {
   mostrarModal('📚 Mi Biblioteca Completa', contenido);
 }
 
-// Eliminar item de la biblioteca
 async function eliminarItemBiblioteca(categoria, index) {
   const item = database.biblioteca[categoria][index];
   
@@ -459,13 +587,10 @@ async function eliminarItemBiblioteca(categoria, index) {
     
     actualizarEstadisticasBiblioteca();
     cerrarModal();
-    
-    // Reabrir el modal actualizado
     setTimeout(() => mostrarBibliotecaCompleta(), 300);
   }
 }
 
-// Editar item de la biblioteca
 function editarItemBiblioteca(categoria, index) {
   const item = database.biblioteca[categoria][index];
   
@@ -517,7 +642,6 @@ function editarItemBiblioteca(categoria, index) {
   }, 100);
 }
 
-// Guardar la edición del item
 async function guardarEdicionBiblioteca(categoria, index) {
   const nombre = document.getElementById('nombre-edit-modal').value;
   const estado = document.getElementById('estado-edit-modal').value;
@@ -529,7 +653,6 @@ async function guardarEdicionBiblioteca(categoria, index) {
     return;
   }
   
-  // Actualizar el item
   database.biblioteca[categoria][index].nombre = nombre.trim();
   database.biblioteca[categoria][index].estado = estado;
   
@@ -547,8 +670,6 @@ async function guardarEdicionBiblioteca(categoria, index) {
   
   actualizarEstadisticasBiblioteca();
   cerrarModal();
-  
-  // Reabrir el modal actualizado
   setTimeout(() => mostrarBibliotecaCompleta(), 300);
 }
 
@@ -670,7 +791,6 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
   }, 3000);
 }
 
-// Animaciones CSS
 const style = document.createElement('style');
 style.textContent = `
   @keyframes slideIn {
