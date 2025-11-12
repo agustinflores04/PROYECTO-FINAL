@@ -202,16 +202,19 @@ function mostrarResenasComunidad() {
     
     const resenasSeccion = database.reseñas.filter(r => r.tipo === seccion);
     
-    if (resenasSeccion.length === 0) return;
-    
     const cardsGrid = seccionElement.querySelector('.cards-grid');
     if (!cardsGrid) return;
     
+    // Buscar y remover la sección de comunidad existente
     let comunidadSection = seccionElement.querySelector('.comunidad-section');
     if (comunidadSection) {
       comunidadSection.remove();
     }
     
+    // Si no hay reseñas, no mostrar nada
+    if (resenasSeccion.length === 0) return;
+    
+    // Crear nueva sección de reseñas de la comunidad
     comunidadSection = document.createElement('div');
     comunidadSection.className = 'comunidad-section';
     comunidadSection.style.marginTop = '3rem';
@@ -230,9 +233,15 @@ function mostrarResenasComunidad() {
     resenasSeccion.forEach(resena => {
       const card = document.createElement('article');
       card.className = 'card';
+      card.setAttribute('data-resena-id', resena._id || resena.id);
       
       const estrellas = '★'.repeat(resena.puntuacion) + '☆'.repeat(5 - resena.puntuacion);
-      const imagenUrl = resena.imagenUrl || 'https://via.placeholder.com/400x250/0f3460/e94560?text=Sin+Imagen';
+      let imagenUrl = resena.imagenUrl || 'https://via.placeholder.com/400x250/0f3460/e94560?text=Sin+Imagen';
+      
+      // Validar que la URL sea válida
+      if (!imagenUrl.startsWith('http://') && !imagenUrl.startsWith('https://')) {
+        imagenUrl = 'https://via.placeholder.com/400x250/0f3460/e94560?text=Sin+Imagen';
+      }
       
       card.innerHTML = `
         <div class="card-image">
@@ -300,30 +309,44 @@ async function eliminarResenaComunidad(id) {
     return;
   }
   
-  if (confirm(`¿Estás seguro de eliminar la reseña de "${resena.nombreJuego}"?`)) {
-    try {
-      const response = await fetch(`${API_URL}/resenas/${id}`, {
-        method: 'DELETE'
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        // Eliminar de la base de datos local
-        database.reseñas = database.reseñas.filter(r => (r._id || r.id) != id);
+  // Mostrar modal de confirmación personalizado
+  mostrarConfirmacion(
+    '🗑️ Eliminar Reseña',
+    `¿Estás seguro de eliminar la reseña de "<strong>${resena.nombreJuego}</strong>"?<br><br>Esta acción no se puede deshacer.`,
+    async () => {
+      // Si confirma, eliminar
+      try {
+        const response = await fetch(`${API_URL}/resenas/${id}`, {
+          method: 'DELETE'
+        });
         
-        mostrarNotificacion('✅ Reseña eliminada correctamente', 'success');
+        const data = await response.json();
         
-        // Actualizar la visualización
-        mostrarResenasComunidad();
-      } else {
-        mostrarNotificacion('⚠️ Error al eliminar la reseña', 'error');
+        if (data.success) {
+          // Eliminar de la base de datos local
+          database.reseñas = database.reseñas.filter(r => (r._id || r.id) != id);
+          
+          mostrarNotificacion('✅ Reseña eliminada correctamente', 'success');
+          
+          // Actualizar la visualización con animación
+          const card = document.querySelector(`[data-resena-id="${id}"]`);
+          if (card) {
+            card.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => {
+              mostrarResenasComunidad();
+            }, 300);
+          } else {
+            mostrarResenasComunidad();
+          }
+        } else {
+          mostrarNotificacion('⚠️ Error al eliminar la reseña', 'error');
+        }
+      } catch (error) {
+        console.error('❌ Error al eliminar reseña:', error);
+        mostrarNotificacion('❌ Error de conexión al eliminar', 'error');
       }
-    } catch (error) {
-      console.error('❌ Error al eliminar reseña:', error);
-      mostrarNotificacion('❌ Error de conexión al eliminar', 'error');
     }
-  }
+  );
 }
 
 async function manejarEnvioReseña(e) {
@@ -332,9 +355,13 @@ async function manejarEnvioReseña(e) {
   const form = e.target;
   const seccion = form.closest('section').id;
   
-  const inputs = form.querySelectorAll('input[type="text"], input[type="url"]');
+  // Obtener campos por nombre específico
+  const inputs = form.querySelectorAll('input[type="text"]');
   const inputNombre = inputs[0];
-  const inputImagen = inputs[1];
+  
+  // Buscar específicamente el input de URL
+  const inputImagen = form.querySelector('input[type="url"]');
+  
   const selectCategoria = form.querySelector('select');
   const puntuacion = form.querySelector('input[name^="rating"]:checked');
   const textoReseña = form.querySelector('textarea');
@@ -359,17 +386,29 @@ async function manejarEnvioReseña(e) {
     return;
   }
 
+  // Obtener la URL de la imagen correctamente
+  let imagenUrl = 'https://via.placeholder.com/400x250/0f3460/e94560?text=Sin+Imagen';
+  if (inputImagen && inputImagen.value.trim()) {
+    const urlIngresada = inputImagen.value.trim();
+    // Validar que sea una URL válida
+    if (urlIngresada.startsWith('http://') || urlIngresada.startsWith('https://')) {
+      imagenUrl = urlIngresada;
+    }
+  }
+
   const nuevaReseña = {
     nombreJuego: inputNombre.value.trim(),
     categoria: selectCategoria.value,
     puntuacion: parseInt(puntuacion.value),
     texto: textoReseña.value.trim(),
-    imagenUrl: inputImagen && inputImagen.value.trim() ? inputImagen.value.trim() : 'https://via.placeholder.com/400x250/0f3460/e94560?text=Sin+Imagen',
+    imagenUrl: imagenUrl,
     fecha: new Date().toLocaleDateString('es-ES'),
     autor: usuarioActual ? usuarioActual.nombre : 'Anónimo',
     likes: 0,
     tipo: seccion
   };
+
+  console.log('📸 URL de imagen:', imagenUrl); // Debug
 
   database.reseñas.push(nuevaReseña);
 
@@ -574,21 +613,27 @@ function mostrarBibliotecaCompleta() {
 async function eliminarItemBiblioteca(categoria, index) {
   const item = database.biblioteca[categoria][index];
   
-  if (confirm(`¿Estás seguro de eliminar "${item.nombre}"?`)) {
-    database.biblioteca[categoria].splice(index, 1);
-    
-    const guardado = await guardarBiblioteca();
-    
-    if (guardado) {
-      mostrarNotificacion('✅ Item eliminado correctamente', 'success');
-    } else {
-      mostrarNotificacion('⚠️ Error al eliminar de la base de datos', 'warning');
+  // Mostrar modal de confirmación personalizado
+  mostrarConfirmacion(
+    '🗑️ Eliminar de Biblioteca',
+    `¿Estás seguro de eliminar "<strong>${item.nombre}</strong>" de tu biblioteca?<br><br>Esta acción no se puede deshacer.`,
+    async () => {
+      // Si confirma, eliminar
+      database.biblioteca[categoria].splice(index, 1);
+      
+      const guardado = await guardarBiblioteca();
+      
+      if (guardado) {
+        mostrarNotificacion('✅ Item eliminado correctamente', 'success');
+      } else {
+        mostrarNotificacion('⚠️ Error al eliminar de la base de datos', 'warning');
+      }
+      
+      actualizarEstadisticasBiblioteca();
+      cerrarModal();
+      setTimeout(() => mostrarBibliotecaCompleta(), 300);
     }
-    
-    actualizarEstadisticasBiblioteca();
-    cerrarModal();
-    setTimeout(() => mostrarBibliotecaCompleta(), 300);
-  }
+  );
 }
 
 function editarItemBiblioteca(categoria, index) {
@@ -704,6 +749,7 @@ function mostrarModal(titulo, contenido) {
       justify-content: center;
       align-items: center;
       padding: 1rem;
+      animation: fadeIn 0.3s ease;
     `;
     document.body.appendChild(overlay);
   }
@@ -718,6 +764,7 @@ function mostrarModal(titulo, contenido) {
       overflow-y: auto;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
       border: 2px solid #e94560;
+      animation: slideUp 0.3s ease;
     ">
       <div style="padding: 1.5rem; border-bottom: 2px solid rgba(233, 69, 96, 0.3); display: flex; justify-content: space-between; align-items: center;">
         <h2 style="color: #e94560; margin: 0;">${titulo}</h2>
@@ -733,7 +780,8 @@ function mostrarModal(titulo, contenido) {
           display: flex;
           align-items: center;
           justify-content: center;
-        ">×</button>
+          transition: transform 0.2s ease;
+        " onmouseover="this.style.transform='rotate(90deg)'" onmouseout="this.style.transform='rotate(0deg)'">×</button>
       </div>
       <div style="padding: 1.5rem;">
         ${contenido}
@@ -748,10 +796,98 @@ function mostrarModal(titulo, contenido) {
   });
 }
 
+function mostrarConfirmacion(titulo, mensaje, onConfirmar) {
+  let overlay = document.getElementById('modal-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'modal-overlay';
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      animation: fadeIn 0.3s ease;
+    `;
+    document.body.appendChild(overlay);
+  }
+
+  overlay.innerHTML = `
+    <div style="
+      background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+      border-radius: 10px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(233, 69, 96, 0.6);
+      border: 2px solid #e94560;
+      animation: slideUp 0.3s ease;
+    ">
+      <div style="padding: 2rem; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🗑️</div>
+        <h2 style="color: #e94560; margin: 0 0 1rem 0; font-size: 1.5rem;">${titulo}</h2>
+        <p style="color: #c0c0c0; line-height: 1.6; margin-bottom: 2rem;">${mensaje}</p>
+        <div style="display: flex; gap: 1rem;">
+          <button onclick="cerrarModal()" style="
+            flex: 1;
+            padding: 1rem;
+            background: transparent;
+            border: 2px solid #808080;
+            color: #c0c0c0;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+          " onmouseover="this.style.background='#808080'; this.style.color='white'" onmouseout="this.style.background='transparent'; this.style.color='#c0c0c0'">
+            Cancelar
+          </button>
+          <button id="btn-confirmar" style="
+            flex: 1;
+            padding: 1rem;
+            background: #e94560;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+          " onmouseover="this.style.background='#d63651'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='#e94560'; this.style.transform='scale(1)'">
+            Sí, eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const btnConfirmar = document.getElementById('btn-confirmar');
+    if (btnConfirmar) {
+      btnConfirmar.addEventListener('click', () => {
+        cerrarModal();
+        onConfirmar();
+      });
+    }
+  }, 100);
+
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) {
+      cerrarModal();
+    }
+  });
+}
+
 function cerrarModal() {
   const overlay = document.getElementById('modal-overlay');
   if (overlay) {
-    overlay.remove();
+    overlay.style.animation = 'fadeOut 0.3s ease';
+    setTimeout(() => overlay.remove(), 300);
   }
 }
 
@@ -812,6 +948,35 @@ style.textContent = `
     to {
       transform: translateX(400px);
       opacity: 0;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
     }
   }
 `;

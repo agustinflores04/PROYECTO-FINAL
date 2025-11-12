@@ -106,11 +106,6 @@
             <input type="text" id="game-name" name="game-name" placeholder="Ej: The Last of Us" required>
           </div>
 
-       <div class="form-group">
-  <label for="imagen-url">URL de la Imagen (opcional):</label>
-  <input type="url" id="imagen-url" name="imagen-url" placeholder="Ej: https://ejemplo.com/portada.jpg">
-</div>
-
           <div class="form-group">
             <label for="game-category">Categoría:</label>
             <select id="game-category" name="game-category" required>
@@ -144,6 +139,11 @@
             <label for="review-text">Tu Reseña:</label>
             <textarea id="review-text" name="review-text" rows="5" placeholder="Comparte tu opinión sobre el juego..." required></textarea>
           </div>
+
+           <div class="form-group">
+  <label for="imagen-url">URL de la Imagen (opcional):</label>
+  <input type="url" id="imagen-url" name="imagen-url" placeholder="Ej: https://GrandTheftAutoV.com/portada.jpg">
+</div>
 
           <button type="submit" class="btn btn-submit">Publicar Reseña</button>
         </form>
@@ -205,10 +205,6 @@
             <input type="text" id="anime-name" name="anime-name" placeholder="Ej: Naruto" required>
           </div>
 
-         <div class="form-group">
-  <label for="imagen-url">URL de la Imagen (opcional):</label>
-  <input type="url" id="imagen-url" name="imagen-url" placeholder="Ej: https://ejemplo.com/portada.jpg">
-</div>
 
           <div class="form-group">
             <label for="anime-category">Categoría:</label>
@@ -239,9 +235,14 @@
             </div>
           </div>
 
-         <div class="form-group">
+      <div class="form-group">
+            <label for="review-text">Tu Reseña:</label>
+            <textarea id="review-text" name="review-text" rows="5" placeholder="Comparte tu opinión sobre el anime..." required></textarea>
+          </div>
+
+            <div class="form-group">
   <label for="imagen-url">URL de la Imagen (opcional):</label>
-  <input type="url" id="imagen-url" name="imagen-url" placeholder="Ej: https://ejemplo.com/portada.jpg">
+  <input type="url" id="imagen-url" name="imagen-url" placeholder="Ej: https://Naruto.com/portada.jpg">
 </div>
 
           <button type="submit" class="btn btn-submit">Publicar Reseña</button>
@@ -305,11 +306,6 @@
             <input type="text" id="movie-name" name="movie-name" placeholder="Ej: Rapidos y Furiosos" required>
           </div>
 
-       <div class="form-group">
-  <label for="imagen-url">URL de la Imagen (opcional):</label>
-  <input type="url" id="imagen-url" name="imagen-url" placeholder="Ej: https://ejemplo.com/portada.jpg">
-</div>
-
           <div class="form-group">
             <label for="movie-category">Categoría:</label>
             <select id="movie-category" name="movie-category" required>
@@ -343,6 +339,11 @@
             <label for="review-text">Tu Reseña:</label>
             <textarea id="review-text" name="review-text" rows="5" placeholder="Comparte tu opinión sobre la película..." required></textarea>
           </div>
+
+            <div class="form-group">
+  <label for="imagen-url">URL de la Imagen (opcional):</label>
+  <input type="url" id="imagen-url" name="imagen-url" placeholder="Ej: https://Sonic.com/portada.jpg">
+</div>
 
           <button type="submit" class="btn btn-submit">Publicar Reseña</button>
         </form>
@@ -404,11 +405,6 @@
             <input type="text" id="serie-name" name="serie-name" placeholder="Ej: Dexter" required>
           </div>
 
-       <div class="form-group">
-  <label for="imagen-url">URL de la Imagen (opcional):</label>
-  <input type="url" id="imagen-url" name="imagen-url" placeholder="Ej: https://ejemplo.com/portada.jpg">
-</div>
-
           <div class="form-group">
             <label for="serie-category">Categoría:</label>
             <select id="serie-category" name="serie-category" required>
@@ -442,6 +438,10 @@
             <label for="review-text">Tu Reseña:</label>
             <textarea id="review-text" name="review-text" rows="5" placeholder="Comparte tu opinión sobre la serie..." required></textarea>
           </div>
+  <div class="form-group">
+  <label for="imagen-url">URL de la Imagen (opcional):</label>
+  <input type="url" id="imagen-url" name="imagen-url" placeholder="Ej: https://StrangerThinks.com/portada.jpg">
+</div>
 
           <button type="submit" class="btn btn-submit">Publicar Reseña</button>
         </form>
@@ -483,6 +483,6 @@
     <p>Creado por Agustín Flores para Sofka Technologies // Programa "Jóvenes Creativos" 2025 Paysandú, Uruguay.</p>
     <p>El Nexo Digital &copy; 2025</p>
   </footer>
-  <script src="./index.js"></script>
+ <script src="./index.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

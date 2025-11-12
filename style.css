@@ -318,7 +318,7 @@ section > p {
 }
 
 .form-group input[type="text"]:focus,
-.form-group input[type="url"],
+.form-group input[type="url"]:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
