@@ -2,8 +2,8 @@
 // CONFIGURACIÓN DE LA API
 // ============================================
 
-// URL del backend (cambia esto cuando deploys tu servidor)
-const API_URL = 'https://proyecto-final-backend-tt8l.onrender.com/api';
+
+const API_URL ='http://localhost:5000/api';
 const USUARIO_ID = 'default-user';
 
 // ============================================
